@@ -1,0 +1,42 @@
+version: '3'
+services:
+  webserver_1:
+    container_name: ${PROJECT_NAME}_1
+    build: ./web-server-1
+    restart: always
+    expose:
+      - ${WEB_EXPOSED_PORT}
+    networks:
+      public_net:
+        ipv4_address: ${WEB_SERVER_1_IP}
+  webserver_2:
+    container_name: ${PROJECT_NAME}_2
+    build: ./web-server-2
+    restart: always
+    expose:
+      - ${WEB_EXPOSED_PORT}
+    networks:
+      public_net:
+        ipv4_address: ${WEB_SERVER_2_IP}
+  haproxy:
+    container_name: ${PROJECT_NAME}_proxy
+    build: ./haproxy
+    restart: always
+    ports:
+      - 80:80
+    expose:
+      - 80
+    networks:
+      public_net:
+        ipv4_address: ${HAPROXY_IP}
+    environment:
+      - WEB_SERVER_1_IP=${WEB_SERVER_1_IP}
+      - WEB_SERVER_2_IP=${WEB_SERVER_2_IP}
+      - WEB_EXPOSED_PORT=${WEB_EXPOSED_PORT}
+networks:
+  public_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: ${NETWORK}
