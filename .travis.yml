@@ -1,0 +1,8 @@
+sudo: required
+service:
+  - docker
+env:
+  - DOCKER_COMPOSE_VERSION: 1.4.2
+script:
+  - docker-compose build
+  - docker-compose run test
